@@ -2,7 +2,7 @@ Creating containers in a simple overlay-network
 -----------------------------------------------
 
 Disclaimer:
-We'll touch some parts that we didn't talk about in detail in this hands-on, namely docker swarm and docker-stacks (docker service command). Don't be afraid, the commands should be straight forward and this should just show you how simple it can create a virtual overlay-network with two hosts that run docker :).
+We'll touch some parts that we didn't talk about in detail in this hands-on, namely docker swarm and docker-stacks (docker service command). Don't be afraid, the commands should be straight forward and this should just show you how simple you can create a virtual overlay-network with two hosts that run docker :).
 
 Step 1
 ------
@@ -24,15 +24,16 @@ Now we can create a new overlay network (logical/virtual network) which we will 
 	docker network create -d overlay ueber-net
 	
 * you can list the new network with ´docker network ls´
+* since we're in "swarm mode" on our nodes now, docker will brint the new network automatically to the other node if the network is needed by a container
 
 Step 3
 ------
-* We will now use docker stack (distributed services) to start two containers. We'll define that ueber-net should be used for both created containers. 
+* We will now use docker stack to start two containers in our swarm. We'll define that ueber-net should be used for both created containers. 
 
 	docker service create --name t --network ueber-net --replicas 2 ubuntu sleep infinity
 	
 * notice that the default strategy is to distribute the containers in an even manner, so we can be sure that two containers run on different nodes. (side note: Normally it's recommended to create an odd number of instances to still have distinct majorities if a node disappears, but we will ignore that for this lab exercise =)
-* as you can see, the containers are just idling, we just want to keep them running as an example
+* as you can see, the containers are just idling, we just want to keep them running as an example ("sleep infinity" command)
 
 Step 4
 ------
@@ -43,7 +44,7 @@ Step 4
 
 Step 5 For quick people
 ------------------------
-Jump into the container and install ping command:
+Jump into the container (with 'docker exec') and install ping command:
 	apt-get update
 	apt-get install iputils-ping
 => you can ping the other container by name or its internal docker IP (docker inspect shows this IP).
